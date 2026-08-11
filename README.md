@@ -46,12 +46,25 @@ cd twilio-sms-app
 npm install
 ```
 
-The project uses the following main packages:
+### 4. Install Twilio
 
-- `twilio` - Twilio API integration for sending SMS
-- `dotenv` - Loads environment variables from the `.env` file
+If installing the Twilio package separately:
 
-### 4. Create the environment file
+```bash
+npm install twilio
+```
+
+`twilio` is used for connecting to the Twilio API and sending SMS messages.
+
+### 5. Install dotenv
+
+Install `dotenv` for loading environment variables from the `.env` file:
+
+```bash
+npm install dotenv
+```
+
+### 6. Create the environment file
 
 Create a `.env` file in the project root:
 
@@ -73,7 +86,7 @@ TO_PHONE=+919876543210
 
 **Important:** Never commit the `.env` file to GitHub because it contains sensitive Twilio credentials.
 
-### 5. Run the application
+### 7. Run the application
 
 ```bash
 node index.js
