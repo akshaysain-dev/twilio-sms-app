@@ -8,7 +8,7 @@ receive the same SMS.
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/akshaysain-dev/twilio-sms-app.git
+git clone https://github.com/akshaysain-dev/twilio-sms-app/tree/Without-Basic-auth
 ```
 
 ### 2. Go to the project directory
