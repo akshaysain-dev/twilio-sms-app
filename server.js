@@ -9,42 +9,6 @@ const { executeGroup } = require("./services/twilioService");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ---------- Basic Auth (protects everything below) ----------
-//
-// Required once this app is reachable from outside localhost.
-// Set ADMIN_USER / ADMIN_PASS in .env. If either is missing, auth is
-// skipped with a loud warning — fine for pure localhost testing, but
-// never deploy publicly without setting both.
-
-const ADMIN_USER = process.env.ADMIN_USER;
-const ADMIN_PASS = process.env.ADMIN_PASS;
-
-if (!ADMIN_USER || !ADMIN_PASS) {
-  console.warn(
-    "WARNING: ADMIN_USER / ADMIN_PASS not set in .env — dashboard has NO login. " +
-    "Do not expose this server to the internet until you set them."
-  );
-} else {
-  app.use((req, res, next) => {
-    const header = req.headers.authorization || "";
-    const [scheme, encoded] = header.split(" ");
-
-    if (scheme === "Basic" && encoded) {
-      const decoded = Buffer.from(encoded, "base64").toString("utf8");
-      const separatorIndex = decoded.indexOf(":");
-      const user = decoded.slice(0, separatorIndex);
-      const pass = decoded.slice(separatorIndex + 1);
-
-      if (user === ADMIN_USER && pass === ADMIN_PASS) {
-        return next();
-      }
-    }
-
-    res.set("WWW-Authenticate", 'Basic realm="SMS Order Group Manager"');
-    res.status(401).send("Authentication required.");
-  });
-}
-
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
