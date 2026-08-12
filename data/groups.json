@@ -1,0 +1,29 @@
+[
+  {
+    "id": "group-001",
+    "orderNumber": "Working Numbers",
+    "phoneNumbers": [
+      "+15516550939",
+      "+15516550940",
+      "+15516550941"
+    ]
+  },
+  {
+    "id": "group-002",
+    "orderNumber": "ORD-123456",
+    "phoneNumbers": [
+      "+1599877847",
+      "+1599877848",
+      "+1599877849"
+    ]
+  },
+  {
+    "id": "group-003",
+    "orderNumber": "Indian numbers",
+    "phoneNumbers": [
+      "+919658547548",
+      "+919658543254",
+      "+919658549654"
+    ]
+  }
+]

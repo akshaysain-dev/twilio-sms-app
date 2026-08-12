@@ -1,192 +1,87 @@
-# Twilio SMS App
+# SMS Order Group Manager (Local)
 
-A simple Node.js application for sending SMS messages using the Twilio API.
+Local Node.js + Twilio dashboard for managing SMS "order groups" — each
+group is an order number tied to a list of phone numbers that should
+receive the same SMS.
 
-The application accepts an order number, sends an SMS notification through Twilio, and saves the complete Twilio API response into a JSON file.
+## Setup
 
-## Features
-
-- Send SMS using Twilio
-- Dynamic order number in SMS message
-- Environment-based Twilio credentials
-- Save complete Twilio API response
-- Automatically overwrite the previous response
-- Error handling with JSON response
-- Secure configuration using `.env`
-- GitHub-ready project structure
-
-## Requirements
-
-Before running the project, make sure you have:
-
-- Node.js installed
-- npm installed
-- A Twilio account
-- A Twilio phone number
-- Twilio Account SID
-- Twilio Auth Token
-
-## Installation
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/akshaysain-dev/twilio-sms-app.git
 ```
-
-### 2. Go to the project directory
-
-```bash
-cd twilio-sms-app
-```
-
-### 3. Install dependencies
-
-```bash
 npm install
+node server.js
 ```
 
-### 4. Install Twilio
+Then open: **http://localhost:3000**
 
-If installing the Twilio package separately:
+Your `.env` already has the working Twilio credentials carried over from
+the original `index.js` script:
 
-```bash
-npm install twilio
+```
+TWILIO_SID=...
+TWILIO_AUTH=...
+TWILIO_PHONE=...
+PORT=3000
 ```
 
-`twilio` is used for connecting to the Twilio API and sending SMS messages.
+## What's in the dashboard
 
-### 5. Install dotenv
+- **Order Groups table** — loaded live from `data/groups.json` via the API.
+- **+ Add Order Group** — modal with an order number field and unlimited
+  phone number rows (`+ Add Number` / `Remove`).
+- **Edit** — same modal, pre-filled, updates `data/groups.json` on save.
+- **Delete** — confirmation prompt, then removes the group.
+- **Execute** — confirmation prompt, then sends
+  `New Order received: <orderNumber>` to every number in that group.
+  One failed number does not stop the others. Results are shown
+  immediately (✓ / ✗ per number) and appended to
+  `data/twilio-response.json`.
 
-Install `dotenv` for loading environment variables from the `.env` file:
+## API
 
-```bash
-npm install dotenv
+| Method | Route                        | Purpose                     |
+|--------|-------------------------------|------------------------------|
+| GET    | `/api/groups`                 | List all groups              |
+| GET    | `/api/groups/:id`              | Get one group                |
+| POST   | `/api/groups`                 | Create a group                |
+| PUT    | `/api/groups/:id`              | Update a group                |
+| DELETE | `/api/groups/:id`              | Delete a group                |
+| POST   | `/api/groups/:id/execute`      | Send SMS to every number in the group |
+
+## Project structure
+
 ```
-
-### 6. Create the environment file
-
-Create a `.env` file in the project root:
-
-```env
-TWILIO_SID=your_twilio_account_sid
-TWILIO_AUTH=your_twilio_auth_token
-TWILIO_PHONE=your_twilio_phone_number
-TO_PHONE=recipient_phone_number
-```
-
-Example:
-
-```env
-TWILIO_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-TWILIO_AUTH=your_auth_token
-TWILIO_PHONE=+1234567890
-TO_PHONE=+919876543210
-```
-
-**Important:** Never commit the `.env` file to GitHub because it contains sensitive Twilio credentials.
-
-### 7. Run the application
-
-```bash
-node index.js
-```
-
-If the SMS is sent successfully, you will see:
-
-```text
-SMS sent successfully!
-Message SID: SMxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-Response saved to: twilio-response.json
-```
-
-## Usage
-
-The order number is passed to the SMS function in `index.js`:
-
-```javascript
-sendOrderSMS("ORD-12345");
-```
-
-To send an SMS for another order, change the order number:
-
-```javascript
-sendOrderSMS("ORD-12346");
-```
-
-The SMS will contain:
-
-```text
-New Order received: ORD-12346
-```
-
-## Twilio Response
-
-After the SMS is sent, the complete Twilio API response is saved in:
-
-```text
-twilio-response.json
-```
-
-The response file is automatically overwritten whenever a new SMS is sent, so only the latest response is stored.
-
-## Error Handling
-
-If the SMS fails, the error response is saved in the same JSON file.
-
-Example:
-
-```json
-{
-  "error": true,
-  "message": "Error message",
-  "code": null,
-  "status": null
-}
-```
-
-## Project Structure
-
-```text
-twilio-sms-app/
-│
-├── index.js
+sms-manager/
+├── server.js                 # Express app + API routes
+├── index.js                  # original standalone script — untouched, still runs on its own
+├── orders.json                # original data file — untouched
+├── twilio-response.json       # original response log — untouched
+├── .env
 ├── package.json
-├── package-lock.json
-├── .gitignore
-├── .env                  # Local only - not committed
-└── twilio-response.json  # Generated locally - not committed
+├── data/
+│   ├── groups.json            # dashboard's live data source (has stable "id" per group)
+│   └── twilio-response.json   # dashboard's execution history
+├── services/
+│   ├── twilioService.js       # sendSMS() / executeGroup() — same Twilio call as the original index.js
+│   └── groupsStore.js         # read/write groups.json, with fallback if missing/invalid
+└── public/
+    ├── index.html
+    ├── css/style.css
+    └── js/app.js
 ```
 
-## Dependencies
+## Notes
 
-The project uses:
-
-- Node.js
-- Twilio Node.js SDK
-- dotenv
-
-## Security
-
-The following files are excluded from Git:
-
-```text
-.env
-node_modules/
-twilio-response.json
-```
-
-Never expose your Twilio:
-
-- Account SID
-- Auth Token
-- Phone numbers or other private credentials
-
-## Future Improvements
-
-- REST API endpoint for sending SMS
-- Laravel integration
-- Automatic SMS when an order is created
-- Delivery status tracking
-- Twilio webhooks
-- SMS logs and history
+- `data/groups.json` is the source of truth for the dashboard. Groups get
+  a stable `id` (e.g. `group-001`) so edits/deletes never rely on array
+  position.
+- If `data/groups.json` is missing, empty, or invalid JSON, the app falls
+  back to a fixed default group instead of crashing.
+- Phone numbers are validated for E.164 format (`+` followed by 8–15
+  digits) both in the browser and on the server.
+- `data/twilio-response.json` keeps growing with each execution — old
+  results are never overwritten, just appended to.
+- The original `index.js`, `orders.json`, and `twilio-response.json` files
+  are left exactly as they were and still work with `node index.js` if
+  you ever want to run the old script directly.
+- This is local-only: no auth, no database, no webhooks, no hosting — as
+  specified.

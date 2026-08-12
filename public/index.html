@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dispatch — SMS Order Group Manager</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-mark">
+      <span class="mark-dot" aria-hidden="true"></span>
+      <div>
+        <div class="mark-title">DISPATCH</div>
+        <div class="mark-sub">SMS Order Group Manager</div>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="btnAddGroup">+ Add Order Group</button>
+  </header>
+
+  <main class="wrap">
+
+    <div id="banner" class="banner hidden" role="status"></div>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h1>Order Groups</h1>
+        <span class="panel-count" id="groupCount">0 groups</span>
+      </div>
+
+      <div id="tableWrap">
+        <table class="manifest" id="groupsTable">
+          <thead>
+            <tr>
+              <th class="col-num">Ticket ID</th>
+              <th>Order Number</th>
+              <th class="col-center">Numbers</th>
+              <th class="col-center">Last Run</th>
+              <th class="col-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="groupsBody">
+            <!-- rows injected by app.js -->
+          </tbody>
+        </table>
+
+        <div id="emptyState" class="empty-state hidden">
+          <div class="empty-dot"></div>
+          <p>No order groups yet.</p>
+          <p class="empty-sub">Add one to start dispatching SMS to a set of numbers.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ADD / EDIT MODAL -->
+  <div class="modal-overlay hidden" id="groupModalOverlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="groupModalTitle">
+      <div class="modal-head">
+        <h2 id="groupModalTitle">New Order Group</h2>
+        <button class="icon-btn" id="closeGroupModal" aria-label="Close">&times;</button>
+      </div>
+
+      <form id="groupForm">
+        <div class="field">
+          <label for="orderNumberInput">Order Number</label>
+          <input type="text" id="orderNumberInput" placeholder="ORD-12345" autocomplete="off" />
+        </div>
+
+        <div class="field">
+          <label>Phone Numbers</label>
+          <div id="phoneList" class="phone-list"></div>
+          <button type="button" class="btn btn-ghost btn-small" id="addPhoneBtn">+ Add Number</button>
+        </div>
+
+        <div id="formError" class="form-error hidden"></div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="cancelGroupModal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveGroupBtn">Save Group</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRM MODAL -->
+  <div class="modal-overlay hidden" id="deleteModalOverlay">
+    <div class="modal modal-small" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h2>Delete Order Group</h2>
+        <button class="icon-btn" id="closeDeleteModal" aria-label="Close">&times;</button>
+      </div>
+      <p id="deleteMessage" class="modal-text"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="cancelDeleteModal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete Group</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXECUTE CONFIRM MODAL -->
+  <div class="modal-overlay hidden" id="executeModalOverlay">
+    <div class="modal modal-small" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h2>Send SMS</h2>
+        <button class="icon-btn" id="closeExecuteModal" aria-label="Close">&times;</button>
+      </div>
+      <p id="executeMessage" class="modal-text"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="cancelExecuteModal">Cancel</button>
+        <button type="button" class="btn btn-signal" id="confirmExecuteBtn">Send SMS</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXECUTION RESULT MODAL -->
+  <div class="modal-overlay hidden" id="resultModalOverlay">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h2>SMS Execution Completed</h2>
+        <button class="icon-btn" id="closeResultModal" aria-label="Close">&times;</button>
+      </div>
+
+      <div id="resultSummary" class="result-summary"></div>
+
+      <div id="resultList" class="result-list"></div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary" id="closeResultBtn">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

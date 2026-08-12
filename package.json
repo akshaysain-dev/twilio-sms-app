@@ -1,10 +1,10 @@
 {
-  "name": "twilio-sms-app",
+  "name": "sms-manager",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Local Node.js + Twilio SMS Order Group Manager with HTML admin dashboard",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +12,7 @@
   "type": "commonjs",
   "dependencies": {
     "dotenv": "^17.4.2",
+    "express": "^4.19.2",
     "twilio": "^6.0.2"
   }
 }
